@@ -14,7 +14,7 @@ The *tutorials* folder contains jupyter notebooks meant to introduce common anal
 
 ## Slice Analysis
 
-Scripts for analyzing data specific to the lab. Mostly LFP / spike data collected from electrode array recordings of brain slices, with stimulus information contained in [ceed](https://github.com/matham/ceed) files.
+Scripts for analyzing LFP / spike data collected from electrode array recordings of brain slices, with stimulus information contained in [ceed](https://github.com/matham/ceed) files.
 
 ## Other Resources
 
