@@ -79,7 +79,7 @@ def firls_bp_filter(data, lowcut, highcut, fs, axis=-1, trans_width = 0.15):
     ffreqs  = [0, (1-trans_width)*lowcut, lowcut, highcut, (1+trans_width)*highcut, nyquist]
     ideal = [0, 0, 1, 1, 0, 0]
     b = firls(filt_order, ffreqs, ideal, nyq=nyquist)
-    w, h = signal.freqz(b, [1])
+    # w, h = signal.freqz(b, [1])
     return filtfilt(b, [1], data, axis=axis, padtype=None)
 
 
