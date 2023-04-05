@@ -243,6 +243,7 @@ def get_all_exps_enclosed(file):
     stim_df.dropna(inplace=True, how='all')
     return stim_df
 
+
 def write_exp_df_to_excel(exp_df, excel, sheet):
     book = load_workbook(excel)
     writer = pd.ExcelWriter(excel)
@@ -392,6 +393,59 @@ def get_exp_eventdata(reader, select_dataframe):
             else:
                 overall_df = overall_df.append(df)
         return overall_df
+
+
+def fix_h5_alignment_intensity_series(h5_file, exp_df, drop_exps=None, wait_time=2*s, fs=20000*Hz):
+    """
+    Function that attempts to align CEED data with MCS data from the merged h5 file when the merge script fails to
+    align properly based on periods of zero output from the projector.
+
+    This works frequently, but not reliably, so the user is advised to look at the results to verify
+    that the data alignment is correct.
+
+
+    Parameters
+    ------------
+    h5_file: h5 file
+        An h5 file that has been merged from the MCS and Ceed h5 files, and contains the electrode data
+    exp_df: DataFrame
+        Containing the Ceed stimulus information
+    drop_exps: list
+        Experiments to drop from the resulting DataFrame
+    resample: bool, default=True
+        If True, the data will be resampled at 512*Hz, default=True
+    wait_time: time quantity
+        The time to wait before considering projector output to be a new stimulus; should be greater than any period
+        of zero-output during the stimulus, but less than the inter-stimulus interval
+    fs: frequency quantity
+        Sampling rate of the dataset
+    """
+    period = (1/fs).rescale(s).item()
+    wait_time = wait_time.rescale(s).item()
+
+    f = h5py.File(h5_file, 'r')
+    dig_io = f["data"]["mcs_data"]["data_arrays"]["digital_io"]["data"].value
+
+    stim = np.where(dig_io != 0)[0]  # When (in samples) the projector is projecting some light pattern
+
+    stim_delta_samples = np.diff(stim)
+    non_contig = np.where(stim_delta_samples > 1)  # When (in samples) the projected pattern changes, by index of stim/stim_delta
+
+    stim = stim[non_contig].tolist()
+    stim_times = [x * period for x in stim]
+    stim_times = np.array(stim_times)
+    stim_delta_times = np.diff(stim_times)
+    deltas_over_wait = np.where(stim_delta_times > wait_time)
+    times_over_wait = stim_times[deltas_over_wait]
+
+    if drop_exps is not None:
+        for exp in drop_exps:
+            exp_df = exp_df.drop(exp)
+    exp_df['t_start'] = [t * s for t in times_over_wait]
+    exp_df['t_stop'] = [(t + 5) * s for t in times_over_wait]
+
+    return exp_df
+
 
 if __name__ == "__main__":
 
