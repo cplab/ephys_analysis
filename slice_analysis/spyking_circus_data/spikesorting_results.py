@@ -97,7 +97,7 @@ def get_spikes_by_cluster(results_folder, cluster_id, fs=20000*Hz, t_stop=3600*s
     t_stop: recording stop time
         Required to return a SpikeTrain object; if unsure, overestimate
     """
-    gui_base = f"{results_folder}/{file}.{ext}"
+    gui_base = r"{results_folder}\{file}.{ext}"
     period = (1./fs).rescale(ms)
     times = np.load(gui_base.format(results_folder=results_folder, file="spike_times", ext="npy"))
     clusters = np.load(gui_base.format(results_folder=results_folder, file="spike_clusters", ext="npy"))
