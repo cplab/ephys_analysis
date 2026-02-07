@@ -20,3 +20,4 @@ Scripts for analyzing LFP / spike data collected from electrode array recordings
 
 [Case Studies in Neural Data Analysis](https://mark-kramer.github.io/Case-Studies-Python/intro.html) (Mark Kramer, Uri Eden, Emily Schlafly): Many tutorials on basic neural data analysis in python
 [voytekresearch/tutorials](https://github.com/voytekresearch/Tutorials/tree/dev): Tutorials from the Voytek lab on ephys data analysis
+[Pynapple](https://pynapple.org): Other tools for neural data analysis, supported by the Flatiron Institute of the Simons Foundation.  
